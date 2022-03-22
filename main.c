@@ -1,9 +1,12 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
 #include "include/lib.h"
+
+#define USAGE_ "%s [-f] [] "
 
 /* 
 ====== STACK MACHINE SIMULATOR ======
@@ -28,23 +31,23 @@
 
 int main(int argc, char *argv[]) {
 
-    int iter = 0;
+    /* 128-word stack */
+    int16_t stack[STACK_MAXSIZE];
+    /* Pointer to top of the stack */
+    int16_t* top;
 
-    if (!argc) {
+
+    if (!(argc-1)) {
         printf(_ERRMSG_NOARGS);
         abort();
     }
 
     else {
         
-        if(argc==1) printf("There is %d argument passed: ", argc);
-        else printf("There are %d arguments passed: ", argc);
-
-        for (; iter < argc; iter++) {
-            printf("\'%s\'", argv[iter]);
-            if ( (argc-iter)>1 ) printf(", ");
+        while (--argc > 0) {
+            printf("\'%s\'", argv[argc]);
+            if (argc!=1) printf(", ");
         }
-
-        exit(EXIT_SUCCESS);
+        return EXIT_SUCCESS;
     }
 }

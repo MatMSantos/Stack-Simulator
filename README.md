@@ -13,3 +13,16 @@ Stack machine architecture designed in C, complete with its own Assembly languag
     - Control: 'PUSH', 'POP'
     - IO: 'OUT' (print top of the stack)
 - Syntax error
+
+***
+
+### How it works:
+
+
+### Next on the list:
+
+- Program arguments:
+    - '-F': prints output to a file
+
+- Functions:
+    - Checks if argument '-F' was passed. Returns 1 if it was, 0 if it was not.
