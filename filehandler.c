@@ -6,6 +6,7 @@
 
 #include "include/lib.h"
 #include "include/filehandler.h"
+#include "include/instructions.h"
 
 void ignorespaces(char **str) {
     while(**str==' ') (*str)++;
@@ -21,9 +22,18 @@ void stoupper(char *str) {
 
 int gotoeol(FILE *fp) {
     char ch;
+    int comment=0;
+
+    // 0000 0010: onlyspaces
+    int result=2;
+
     while((ch=fgetc(fp))!='\n')
-        if(!~ch) return -1;
-    return 0;
+    {
+        if(!~ch) { result|=1; break; }
+        if(ch=='#') comment=1;
+        if(!comment&&(result&2)) if(ch!=' ') result&=1;
+    }
+    return result; //bit 1: spaces, bit 0: eof
 }
 
 FILE *openFile(char name[]) {
@@ -40,7 +50,7 @@ FILE *openFile(char name[]) {
     }
     else extension = strtok(NULL, ".");
 
-    if (strcomp(extension, "sms")==0)
+    if (strcmp(extension, "sms")==0)
     {
         if ((fp = fopen(file, "r"))==NULL) PERROR_STD(file, errno);
         else return fp;
@@ -54,35 +64,6 @@ FILE *openFile(char name[]) {
     return NULL; // Error
 }
 
-/*instruction_t readLine(FILE *fp) {
-
-    static int line = 1;
-    instruction_t inst = { .mne=NULL, .param=NULL, .line=line, .error=0};
-
-    int numchar = 0;
-    char ch;
-
-    // Ler o mnemônico
-    while (numchar<MAXSIZE_MNE)
-    {
-        ch = fgetc(fp);
-        switch(ch)
-        {   // Special cases
-            case  ' ': goto ARGS;
-            case '\n': if(!numchar) return inst;
-            case  '#': if(!numchar) { gotoeol(fp); return inst; }
-        }
-        inst.mne[numchar] = ch;
-        if(++numchar)
-        numchar++;
-    }
-    ARGS:
-    fgets(inst.param, MAXSIZE_PARAM+1, fp);
-
-    line++;
-    return inst;
-}*/
-
 instruction_t readLine(FILE *fp) {
 
     static int line = 1;
@@ -90,13 +71,20 @@ instruction_t readLine(FILE *fp) {
 
     char lineread[MAXSIZE_LINE];
     char *mne;
-    char *ext;
+    char *param;
+    int   param_infos=0;
+    char *extra;
+
+    // Requires bit manipulation because i need two values from gotoeol.
+    // Basically it's too cumbersome to return an array or a struct, and I don't want to allocate
+    // any byte in the memory
+    int   line_info;
 
     if(fgets(lineread, MAXSIZE_LINE, fp)==NULL) { inst.line=EOF; return inst; }
 
     // We need to make sure the file pointer is at the next line after this first read
     fseek(fp, -1L, SEEK_CUR);
-    if(fgetc(fp)!='\n') gotoeol(fp);
+    if(fgetc(fp)!='\n') line_info = gotoeol(fp);
 
     /**
      * Ignore the spaces at the start of the line. If the line consists only of spaces,
@@ -110,18 +98,21 @@ instruction_t readLine(FILE *fp) {
     stoupper(lineread);
 
     mne = strtok(lineread, " ");
-    memmove(inst.mne, mne, 4);
-    ext = strtok(NULL, "");
-    //memmove(inst.param, ext, )
+    param = strtok(NULL, " ");
+    extra = strtok(NULL, "");
 
-    /**
-     * Some remarks to be made:
-     * 
-     *  - 
-     * 
-     */
+    // Mnemonic is greater than 4 chars in size
+    if(strlen(mne)>MAXSIZE_MNE) mne[MAXSIZE_MNE]='\0';
 
+    // Parameter is greater than 6 chars in size ('+' error)
+    if(strlen(param)>MAXSIZE_PARAM) { param[MAXSIZE_PARAM]='\0'; strcat(param, "+"); param_infos++; }
 
+    // There is more than one parameter ('e' error)
+    if(extra) ignorespaces(&extra);
+    if(extra) { strcat(param, "e"); param_infos++; }
+
+    memcpy(inst.mne, mne, MAXSIZE_MNE);
+    memcpy(inst.param, param, MAXSIZE_PARAM+param_infos);
 
     line++;
     return inst;

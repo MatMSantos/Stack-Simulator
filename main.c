@@ -4,7 +4,9 @@
 #include <string.h>
 #include <math.h>
 
-#include "include/lib.h"
+#include "include/filehandler.h"
+#include "include/instructions.h"
+#include "include/stack.h"
 
 #define USAGE_ "%s [-f] [] "
 
