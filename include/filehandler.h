@@ -3,16 +3,17 @@
 
 #include <stdio.h>
 
-#include "lib.h"
+#include "main.h"
 #include "instructions.h"
 
-#define PERROR_STD(name, errno) (fprintf(stderr, "Could not open \"%s.sms\": %s\n", name, strerror(errno)))
-#define PERROR_CUSTOM(name, message) (fprintf(stderr, "Could not open \"%s.sms\": %s\n", name, message))
+#define PERROR_STD(name, errno) (fprintf(stderr, "Could not open \"%s\": %s\n", name, strerror(errno)))
+#define PERROR_CUSTOM(name, message) (fprintf(stderr, "Could not open \"%s\": %s\n", name, message))
 
 #define _ERRMSG_NO_FILE "No file specified"
 #define _ERRMSG_NO_EXTENSION "No extension associated with the file"
 #define _ERRMSG_WRONG_EXTENSION "Unsupported extension"
 
+#define MAXSIZE_NAMELEN 30
 #define MAXSIZE_LINE 14
 
 /**

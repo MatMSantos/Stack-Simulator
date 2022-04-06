@@ -1,8 +1,4 @@
 #include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 
 #include "include/filehandler.h"
 #include "include/instructions.h"
@@ -32,24 +28,15 @@
 */
 
 int main(int argc, char *argv[]) {
+    char name[]="openfiletext.sms";
+    FILE *fp;
+    instruction_t inst;
 
-    /* 128-word stack */
-    int16_t stack[STACK_MAXSIZE];
-    /* Pointer to top of the stack */
-    int16_t* top;
-
-
-    if (!(argc-1)) {
-        printf(_ERRMSG_NOARGS);
-        abort();
+    fp = openFile(name);
+    while((inst=readLine(fp)).line!=EOF)
+    {
+        if(inst.parse) printinst(inst);
     }
 
-    else {
-        
-        while (--argc > 0) {
-            printf("\'%s\'", argv[argc]);
-            if (argc!=1) printf(", ");
-        }
-        return EXIT_SUCCESS;
-    }
+    return 0;
 }

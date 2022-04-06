@@ -43,7 +43,7 @@ enum { NONE, SYNTAX_ERR=8, INST_ERR, ARG_ERR, POP_ERR, PUSH_ERR } error_t;
  * out: 
  * err:
  */
-int parseInst(instruction_t inst);
+int parseinst(instruction_t inst);
 
 /**
  * Parse arithmetic instruction
@@ -97,7 +97,7 @@ void branch();
  * out: none;
  * err: none;
  */
-void clearStack(void);
+void clearstack(void);
 
 /*
 

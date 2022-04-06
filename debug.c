@@ -5,9 +5,9 @@
 
 void printinst(instruction_t inst) {
     printf("===DEBUG===\nInstruction: \n\n");
-    printf("MNE: %s\n", inst.mne);
-    printf("PARAM: %s\n", inst.param);
-    printf("LINE: %d\n", inst.line);
-    printf("ERROR: %d\n", inst.error);
-    printf("PARSE: %d\n\n", inst.parse);
+    printf("\tMNE: %s\n", inst.mne);
+    printf("\tPARAM: %s\n", inst.param);
+    printf("\tLINE: %d\n", inst.line);
+    printf("\tERROR: %d\n", inst.error);
+    printf("\tPARSE: %d\n\n", inst.parse);
 }

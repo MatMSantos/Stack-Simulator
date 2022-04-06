@@ -1,5 +1,5 @@
-#ifndef LIB_H
-    #define LIB_H
+#ifndef MAIN_H
+    #define MAIN_H
 
 /**
  * TO-DO:
