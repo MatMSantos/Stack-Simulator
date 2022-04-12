@@ -3,7 +3,7 @@
 
 #include "include/fixedpoint.h"
 
-double fixed_to_double(double input)
+double fixed_to_double(uint16_t input)
 {
     return((double) input) / (double)(1 << FIXED_POINT_FRACTIONAL_BITS);
 }

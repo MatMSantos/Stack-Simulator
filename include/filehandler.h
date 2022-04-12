@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 
-#include "main.h"
 #include "instructions.h"
 
 #define PERROR_STD(name, errno) (fprintf(stderr, "Could not open \"%s\": %s\n", name, strerror(errno)))
@@ -23,12 +22,6 @@ typedef struct {
     char name[MAXSIZE_LABEL+1];
     int line;
 } label_t;
-
-/**
- * Global variables
- */
-label_t g_listoflabels[MAXNUM_LABELS];
-int g_labelindex = 0;
 
 /**
  * Ignore spaces at the start of a string

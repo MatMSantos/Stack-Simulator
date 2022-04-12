@@ -1,7 +1,8 @@
 #ifndef INSTRUCTIONS_H
     #define INSTRUCTIONS_H
 
-#include "include/stack.h"
+#include "stack.h"
+#include "globals.h"
 
 #define MAXSIZE_MNE 4
 #define MAXSIZE_PARAM 6
@@ -58,18 +59,11 @@ enum io_t { OUT };
 /**
  * Syntax errors
  */
-enum synerror_t { NONE, SYNERR_SYNTAX=8, SYNERR_INST, SYNERR_ARG, SYNERR_POP, SYNERR_PUSH };
+enum synerror_t { SYNERR_NONE, SYNERR_SYNTAX=8, SYNERR_INST, SYNERR_ARG, SYNERR_POP, SYNERR_PUSH };
 /**
  * Runtime errors
  */
-enum runerror_t { NONE, RUNERR_UNDEF_ARG, RUNERR_DIV_BY_ZERO, RUNERR_ARG_OVERFLOW, RUNERR_UNDEF_LABEL };
-
-/**
- * Global variables
- */
-int g_execute = 1;
-int g_jump = 0;
-int g_jumpto = 0;
+enum runerror_t { RUNERR_NONE, RUNERR_UNDEF_ARG, RUNERR_DIV_BY_ZERO, RUNERR_ARG_OVERFLOW, RUNERR_UNDEF_LABEL };
 
 /**
  * PARSING OF INSTRUCTIONS

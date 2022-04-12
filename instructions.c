@@ -358,7 +358,7 @@ void clearstack(void)
     {
         g_stack[iter]=0;
     }
-    STACKTOP(0) = NULL;
+    g_stacktop = NULL;
 }
 
 int parseinst(instruction_t inst)

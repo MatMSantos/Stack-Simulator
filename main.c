@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "include/filehandler.h"
+#include "include/main.h"
+#include "include/initialize.h"
 #include "include/instructions.h"
-#include "include/stack.h"
+#include "include/filehandler.h"
 
 #define USAGE_ "%s [-f] [] "
 
@@ -28,35 +29,6 @@
 =====================================
 */
 
-void init(void) {
-    int iter;
-    for(iter=0; iter<MEMREGSIZE; iter++)
-    {
-        g_memreg[iter]=0;
-    }
-}
-
-void scanlabelsinfile(FILE *fp) {
-    char lineread[MAXSIZE_LINE+1];
-    char *label;
-    int currentline=1;
-
-    rewind(fp);
-    while(fgets(lineread, MAXSIZE_LINE, fp))
-    {
-        if(lineread[strlen(lineread)-1]!='\n') gotoeol(fp);
-
-        if(strchr(lineread, ':')!=NULL)
-        {
-            g_listoflabels[g_labelindex].line=currentline+1;
-            label = strtok(lineread, ":");
-            memcpy(g_listoflabels[g_labelindex].name, label, MAXSIZE_LABEL);
-
-            g_labelindex++;
-        }
-    }
-}
-
 int main(int argc, char *argv[]) {
 
     char name[]="openfiletext.sms";
@@ -65,11 +37,11 @@ int main(int argc, char *argv[]) {
     FILE *fp;
     instruction_t inst;
     
-    fp = openFile(name);
+    fp = openfile(name);
 
     // INITIALIZATION
     init();
     scanlabelsinfile(fp);
-    
+
     return 0;
 }

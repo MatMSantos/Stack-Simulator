@@ -6,6 +6,8 @@
 
 #include "include/filehandler.h"
 #include "include/instructions.h"
+#include "include/stack.h"
+#include "include/globals.h"
 
 void ignorespaces(char **str) {
     while(**str==' ') (*str)++;
@@ -81,7 +83,7 @@ FILE *openfile(char name[]) {
 instruction_t readline(FILE *fp, int jumpto) {
 
     static int line = 1;
-    instruction_t inst = { .mne="", .param="", .param2="", .line=line, .synerror=NONE, .runerror=NONE, .parse=1, .label=0};
+    instruction_t inst = { .mne="", .param="", .param2="", .line=line, .synerror=SYNERR_NONE, .runerror=RUNERR_NONE, .parse=1, .label=0};
 
     char lineread[MAXSIZE_LINE+1];
     char *lp = lineread;
