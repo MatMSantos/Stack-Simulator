@@ -21,19 +21,29 @@ void stoupper(char *str) {
 
 int gotoeol(FILE *fp) {
     char ch;
-    int comment=0;
     int result=0;
 
     while((ch=fgetc(fp))!='\n')
     {
         if(!~ch) break;
-        if(ch=='#') comment=1;
-        if(!comment&&!result) if(ch!=' ') result=1;
+        if(ch!=' ') result=1;
     }
     return result;
 }
 
-FILE *openFile(char name[]) {
+void gotoline(FILE *fp, int line) {
+    char ch;
+    int currentline=1;
+
+    rewind(fp);
+    while((ch=fgetc(fp))!=EOF)
+    {
+        if(ch=='\n') currentline++;
+        if(currentline==line) return;
+    }
+}
+
+FILE *openfile(char name[]) {
 
     FILE *fp;
     char namecpy[MAXSIZE_NAMELEN];
@@ -68,12 +78,12 @@ FILE *openFile(char name[]) {
 // I mean, it works... Mostly. But I can think of several ways I could rewrite this.
 // I didn't want to start from scratch all over again, so I just kept on building upon this
 // monstrosity of ineffectiveness.
-instruction_t readLine(FILE *fp) {
+instruction_t readline(FILE *fp, int jumpto) {
 
     static int line = 1;
-    instruction_t inst = { .mne="", .param="", .line=line, .error=0, .parse=1};
+    instruction_t inst = { .mne="", .param="", .param2="", .line=line, .synerror=NONE, .runerror=NONE, .parse=1, .label=0};
 
-    char lineread[MAXSIZE_LINE];
+    char lineread[MAXSIZE_LINE+1];
     char *lp = lineread;
 
     char *mne;
@@ -82,9 +92,13 @@ instruction_t readLine(FILE *fp) {
     char  lastp;
     int   param_infos=0;
     char *extra;
+    char  lastp2;
 
     // Check if there is garbage at the end of the line or it is just empty space
     int   line_has_garbage = 0;
+
+    // Check if there was a jump called
+    if(g_jump) { line = g_jumpto; gotoline(fp, jumpto); g_jump = 0; }
 
     if(fgets(lineread, MAXSIZE_LINE, fp)==NULL) { inst.line=EOF; return inst; }
 
@@ -106,20 +120,30 @@ instruction_t readLine(FILE *fp) {
     stoupper(lineread);
 
     mne = strtok(lineread, " ");
-    if(mne) lastm = mne[strlen(mne)-1];
+    if(mne)
+    {
+        lastm = mne[strlen(mne)-1];
+
+        if(lastm=='\n') mne[strlen(mne)-1]='\0';
+    }
 
     param = strtok(NULL, " ");
     if(param)
     {
         lastp = param[strlen(param)-1];
         ignorespaces(&param);
-        if(*param=='#') param=NULL;
-    }
-    else { if(lastm=='\n') mne[strlen(mne)-1]='\0'; }
 
-    extra = strtok(NULL, "");
-    if(extra) ignorespaces(&extra);
-    else { if(lastp=='\n') param[strlen(param)-1]='\0'; }
+        if(lastp=='\n') param[strlen(param)-1]='\0';
+    }
+
+    extra = strtok(NULL, " ");
+    if(extra)
+    {
+        lastp2 = extra[strlen(extra)-1];
+        ignorespaces(&extra);
+
+        if(lastp2=='\n') extra[strlen(extra)-1]='\0';
+    }
 
     // Mnemonic is greater than 4 chars in size
     if(mne!=NULL)
@@ -131,18 +155,13 @@ instruction_t readLine(FILE *fp) {
         {
             // Parameter is greater than 6 chars in size ('+' error)
             if(strlen(param)>MAXSIZE_PARAM) { param[MAXSIZE_PARAM]='\0'; strcat(param, "+"); param_infos++; }
-
-            // There is more than one parameter ('e' error)
-            if(extra!=NULL) {
-                param_infos++;
-                if(*extra!='\0')
-                {
-                    if(*extra!='#') strcat(param, "e");
-                }
-                else if(line_has_garbage) strcat(param, "e");
-            }
-            
             memcpy(inst.param, param, MAXSIZE_PARAM+param_infos);
+
+            // There is more than one parameter
+            if(extra!=NULL)
+            {
+                memcpy(inst.param2, extra, MAXSIZE_PARAM2);
+            }
         }
     }
 

@@ -5,6 +5,10 @@
 
 #define MAXSIZE_MNE 4
 #define MAXSIZE_PARAM 6
+#define MAXSIZE_PARAM2 3
+
+#define HALT g_execute=0
+#define IS_HALTED g_execute==0
 
 /**
  * Instruction
@@ -13,20 +17,59 @@
 typedef struct {
     char mne[MAXSIZE_MNE+1];   // Mnemonic
     char param[MAXSIZE_PARAM+3];
+    char param2[MAXSIZE_PARAM2+1];
     // Should be converted to 16-bit integer: [-32768, 32767]
     // Param is 9 chars in size to account for syntax errors:
     // pppppp/'+'/'e' where '+' means parameter exceeds max size and 'e' means more than one parameter
 
     int  line;     // where instruction was read
-    int  error;    // type of error caught
+    int  synerror;    // type of syntax error caught
+    int  runerror;    // type of runtime error caught
 
     int  parse;    // if instruction should be parsed or not
+    int  label;
 } instruction_t;
+
+/**
+ * Arithmetic operations
+ */
+enum math_t { ADD, SUB, MUL, DIV, MOD, LN, EXP };
+
+/**
+ * Logic operations
+ */
+enum logic_t { NOT, OR, AND, MIR };
+
+/**
+ * Control operations
+ */
+enum control_t { PUSH, POP, MOV };
+
+/**
+ * Branching operations
+ */
+enum branch_t { JMP, BZ, BNZ };
+
+/**
+ * IO operations
+ */
+enum io_t { OUT };
 
 /**
  * Syntax errors
  */
-enum { NONE, SYNTAX_ERR=8, INST_ERR, ARG_ERR, POP_ERR, PUSH_ERR } error_t;
+enum synerror_t { NONE, SYNERR_SYNTAX=8, SYNERR_INST, SYNERR_ARG, SYNERR_POP, SYNERR_PUSH };
+/**
+ * Runtime errors
+ */
+enum runerror_t { NONE, RUNERR_UNDEF_ARG, RUNERR_DIV_BY_ZERO, RUNERR_ARG_OVERFLOW, RUNERR_UNDEF_LABEL };
+
+/**
+ * Global variables
+ */
+int g_execute = 1;
+int g_jump = 0;
+int g_jumpto = 0;
 
 /**
  * PARSING OF INSTRUCTIONS
@@ -37,6 +80,69 @@ enum { NONE, SYNTAX_ERR=8, INST_ERR, ARG_ERR, POP_ERR, PUSH_ERR } error_t;
  */
 
 /**
+ * Execute arithmetic instruction
+ * 
+ * in: struct with instruction;
+ * out: none
+ * err: none;
+ */
+void arithmetic(instruction_t inst, int opt);
+
+/**
+ * Execute logic instruction
+ * 
+ * in: struct with instruction;
+ * out: none
+ * err: none;
+ */
+void logic(instruction_t inst, int opt);
+
+/**
+ * Execute control instruction
+ *
+ * in: struct with instruction;
+ * out: none
+ * err: none;
+ */
+void control(instruction_t inst, int opt);
+
+/**
+ * Execute IO instruction
+ * 
+ * in: struct with instruction;
+ * out: none
+ * err: none;
+ */
+void io(instruction_t inst, int opt);
+
+/**
+ * Execute branching instruction (unconditionals & conditionals)
+ * 
+ * in: struct with instruction;
+ * out: none
+ * err: none;
+ */
+void branch(instruction_t inst, int opt);
+
+/**
+ * Clear stack and set the top of the stack to address zero
+ * 
+ * in: none;
+ * out: none;
+ * err: none;
+ */
+void clearstack(void);
+
+/**
+ * Search for label in database, return number of line
+ * 
+ * in: label name;
+ * out: line pointed by label, 0 if label not found;
+ * err: none;
+ */
+int searchlabels(char *label);
+
+/**
  * Check for valid instructions
  * 
  * in: struct with instruction;
@@ -45,71 +151,5 @@ enum { NONE, SYNTAX_ERR=8, INST_ERR, ARG_ERR, POP_ERR, PUSH_ERR } error_t;
  */
 int parseinst(instruction_t inst);
 
-/**
- * Parse arithmetic instruction
- * 
- * in: struct with instruction;
- * out: none
- * err: none;
- */
-void arithmetic();
-
-/**
- * Parse logic instruction
- * 
- * in: struct with instruction;
- * out: none
- * err: none;
- */
-void logic();
-
-/**
- * Parse control instruction
- *
- * in: struct with instruction;
- * out: none
- * err: none;
- */
-void control();
-
-/**
- * Parse IO instruction
- * 
- * in: struct with instruction;
- * out: none
- * err: none;
- */
-void io();
-
-/**
- * Parse branching instruction (unconditionals & conditionals)
- * 
- * in: struct with instruction;
- * out: none
- * err: none;
- */
-void branch();
-
-/**
- * Clear stack
- * 
- * in: none;
- * out: none;
- * err: none;
- */
-void clearstack(void);
-
-/*
-
-switch(instruction.mne){
-    case 'ADD':
-    case 'SUB':
-    case
-
-    case: 
-
-    default: //Erro 001
-}
-*/
 
 #endif

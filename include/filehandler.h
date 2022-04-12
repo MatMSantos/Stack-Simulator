@@ -15,6 +15,20 @@
 
 #define MAXSIZE_NAMELEN 30
 #define MAXSIZE_LINE 14
+#define MAXSIZE_LABEL 8
+
+#define MAXNUM_LABELS 100
+
+typedef struct {
+    char name[MAXSIZE_LABEL+1];
+    int line;
+} label_t;
+
+/**
+ * Global variables
+ */
+label_t g_listoflabels[MAXNUM_LABELS];
+int g_labelindex = 0;
 
 /**
  * Ignore spaces at the start of a string
@@ -38,10 +52,19 @@ void stoupper(char *str);
  * Go to next line in the file
  * 
  * in: pointer to file;
- * out: byte flag where bit 0 is set if there are only spaces;
+ * out: byte flag where bit 0 is set if there are NOT only spaces;
  * err: none;
  */
 int gotoeol(FILE *fp);
+
+/**
+ * Go to specific line in the file
+ * 
+ * in: pointer to file; line number;
+ * out: none;
+ * err: none;
+ */
+void gotoline(FILE* fp, int line);
 
 /**
  * Open file
@@ -50,7 +73,7 @@ int gotoeol(FILE *fp);
  * out: pointer to file;
  * err: null pointer
  */
-FILE *openFile(char name[]);
+FILE *openfile(char name[]);
 
 /**
  * Read line from file, store in 'instruction'
@@ -60,6 +83,6 @@ FILE *openFile(char name[]);
  *      line=EOF at eof (mne and param don't matter);
  * err: none;
  */
-instruction_t readLine(FILE *fp);
+instruction_t readline(FILE *fp, int jumpto);
 
 #endif
