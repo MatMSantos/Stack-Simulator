@@ -1,3 +1,5 @@
+#include <string.h>
+#include "include/globals.h"
 #include "include/initialize.h"
 #include "include/stack.h"
 #include "include/filehandler.h"

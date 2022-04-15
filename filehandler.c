@@ -4,10 +4,10 @@
 #include <string.h>
 #include <ctype.h> //toupper()
 
+#include "include/globals.h"
 #include "include/filehandler.h"
 #include "include/instructions.h"
 #include "include/stack.h"
-#include "include/globals.h"
 
 void ignorespaces(char **str) {
     while(**str==' ') (*str)++;
@@ -83,7 +83,8 @@ FILE *openfile(char name[]) {
 instruction_t readline(FILE *fp, int jumpto) {
 
     static int line = 1;
-    instruction_t inst = { .mne="", .param="", .param2="", .line=line, .synerror=SYNERR_NONE, .runerror=RUNERR_NONE, .parse=1, .label=0};
+    instruction_t inst = { .mne="", .param="", .param2="", .has_garbage=0,
+                           .line=line, .synerror=SYNERR_NONE, .runerror=RUNERR_NONE, .parse=1};
 
     char lineread[MAXSIZE_LINE+1];
     char *lp = lineread;
@@ -98,6 +99,7 @@ instruction_t readline(FILE *fp, int jumpto) {
 
     // Check if there is garbage at the end of the line or it is just empty space
     int   line_has_garbage = 0;
+    char *garbage;
 
     // Check if there was a jump called
     if(g_jump) { line = g_jumpto; gotoline(fp, jumpto); g_jump = 0; }
@@ -146,6 +148,9 @@ instruction_t readline(FILE *fp, int jumpto) {
 
         if(lastp2=='\n') extra[strlen(extra)-1]='\0';
     }
+
+    garbage = strtok(NULL, "");
+    if(line_has_garbage || garbage!=NULL) inst.has_garbage = 1;
 
     // Mnemonic is greater than 4 chars in size
     if(mne!=NULL)

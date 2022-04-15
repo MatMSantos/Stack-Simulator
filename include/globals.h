@@ -1,19 +1,29 @@
 #ifndef GLOBALS_H
     #define GLOBALS_H
 
+    #include <stdint.h>
     #include "filehandler.h"
+    #include "stack.h"
 
     /**
      * File handler
      */
-    label_t g_listoflabels[MAXNUM_LABELS];
-    int g_labelindex = 0;
+    extern label_t g_listoflabels[MAXNUM_LABELS];
+    extern int g_labelindex;
 
     /**
      * Instructions
      */
-    int g_execute = 1;
-    int g_jump = 0;
-    int g_jumpto = 0;
+    extern int g_execute;
+    extern int g_jump;
+    extern int g_jumpto;
+
+    /**
+     * Stack
+     */
+    extern uint16_t  g_memreg[MEMREGSIZE];
+    extern uint16_t  g_regr;
+    extern uint16_t  g_stack[STACK_MAXSIZE];
+    extern uint16_t *g_stacktop;
 
 #endif

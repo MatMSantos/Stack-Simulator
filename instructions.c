@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 
+#include "include/globals.h"
 #include "include/filehandler.h"
 #include "include/instructions.h"
 #include "include/fixedpoint.h"
@@ -20,12 +21,10 @@ int searchlabels(char *label)
     return 0;
 }
 
-void arithmetic(instruction_t inst, int opt)
+instruction_t arithmetic(instruction_t inst, int opt)
 {
     double above;
     double below;
-
-    if(IS_HALTED) return;
 
     // Syntax error:
     // Arithmetic operations have no operands
@@ -33,7 +32,7 @@ void arithmetic(instruction_t inst, int opt)
     {
         inst.synerror = SYNERR_SYNTAX;
         HALT;
-        return;
+        return inst;
     }
 
     // Runtime error:
@@ -44,58 +43,63 @@ void arithmetic(instruction_t inst, int opt)
         inst.runerror = RUNERR_UNDEF_ARG;
         // Halt execution
         HALT;
-        return;
+        return inst;
     }
 
-    // Initializations before arithmetic operations
-    above = fixed_to_double(STACKTOP(0));
-    below = fixed_to_double(STACKTOP(1));
+    if(IS_HALTED) return inst;
 
-    switch(opt)
+    else
     {
-        case ADD:
-            g_regr = double_to_fixed(above+below);
-            break;
-        case SUB:
-            g_regr = double_to_fixed(above-below);
-            break;
-        case MUL:
-            g_regr = double_to_fixed(above*below);
-            break;
-        case DIV:
-            if(STACKTOP(1)==0)
-            {
-                inst.runerror = RUNERR_DIV_BY_ZERO;
-                HALT;
-                return;
-            } 
-            else g_regr = double_to_fixed(above/below);
-            break;
-        case MOD:
-            g_regr = double_to_fixed(fmod(above, below));
-            break;
-        case LN:
-            g_regr = double_to_fixed(log(above));
-            break;
-        case EXP:
-            g_regr = double_to_fixed(exp(above));
-            break;
-        default: // Hopefully it will never get to this
-            break;
+        // Initializations before arithmetic operations
+        above = fixed_to_double(STACKTOP(0));
+        below = fixed_to_double(STACKTOP(1));
+
+        switch(opt)
+        {
+            case ADD:
+                g_regr = double_to_fixed(above+below);
+                break;
+            case SUB:
+                g_regr = double_to_fixed(above-below);
+                break;
+            case MUL:
+                g_regr = double_to_fixed(above*below);
+                break;
+            case DIV:
+                if(STACKTOP(1)==0)
+                {
+                    inst.runerror = RUNERR_DIV_BY_ZERO;
+                    HALT;
+                    return inst;
+                } 
+                else g_regr = double_to_fixed(above/below);
+                break;
+            case MOD:
+                g_regr = double_to_fixed(fmod(above, below));
+                break;
+            case LN:
+                g_regr = double_to_fixed(log(above));
+                break;
+            case EXP:
+                g_regr = double_to_fixed(exp(above));
+                break;
+            default: // Hopefully it will never get to this
+                break;
+        }
     }
+
+    return inst;
 }
 
-void logic(instruction_t inst, int opt)
+instruction_t logic(instruction_t inst, int opt)
 {
-    if(IS_HALTED) return;
-
     // Syntax error:
     // Logic operations have no operands
     if(strlen(inst.param)!=0)
     {
         inst.synerror = SYNERR_SYNTAX;
         HALT;
-        return;
+        return inst;
     }
 
     // Runtime error:
@@ -106,59 +110,64 @@ void logic(instruction_t inst, int opt)
         inst.runerror = RUNERR_UNDEF_ARG;
         // Halt execution
         HALT;
-        return;
+        return inst;
     }
 
-    // Used in MIR operation
-    int cpy = STACKTOP(0);
-    int rev;
-    int iter=(sizeof(int16_t)*8)-1;
+    if(IS_HALTED) return inst;
 
-    switch (opt)
+    else
     {
-        case NOT:
-            g_regr = ~STACKTOP(0);
-            break;
-        case OR:
-            if(g_stacktop==g_stack)
-            {
-                // Return error
-                inst.runerror = RUNERR_UNDEF_ARG;
-                // Halt execution
-                HALT;
-                return;
-            }
-            g_regr = STACKTOP(0) | STACKTOP(1);
-            break;
-        case AND:
-            if(g_stacktop==g_stack)
-            {
-                // Return error
-                inst.runerror = RUNERR_UNDEF_ARG;
-                // Halt execution
-                HALT;
-                return;
-            }
-            g_regr = STACKTOP(0) & STACKTOP(1);
-            break;
-        case MIR:
-            for(; iter >= 0; iter--){
-                rev |= (cpy & 1) << iter;
-                cpy >>= 1;
-            }
-            g_regr = rev;
-            break;
-        default:
-            break;
+        // Used in MIR operation
+        int cpy = STACKTOP(0);
+        int rev;
+        int iter=(sizeof(int16_t)*8)-1;
+
+        switch (opt)
+        {
+            case NOT:
+                g_regr = ~STACKTOP(0);
+                break;
+            case OR:
+                if(g_stacktop==g_stack)
+                {
+                    // Return error
+                    inst.runerror = RUNERR_UNDEF_ARG;
+                    // Halt execution
+                    HALT;
+                    return inst;
+                }
+                g_regr = STACKTOP(0) | STACKTOP(1);
+                break;
+            case AND:
+                if(g_stacktop==g_stack)
+                {
+                    // Return error
+                    inst.runerror = RUNERR_UNDEF_ARG;
+                    // Halt execution
+                    HALT;
+                    return inst;
+                }
+                g_regr = STACKTOP(0) & STACKTOP(1);
+                break;
+            case MIR:
+                for(; iter >= 0; iter--){
+                    rev |= (cpy & 1) << iter;
+                    cpy >>= 1;
+                }
+                g_regr = rev;
+                break;
+            default:
+                break;
+        }
     }
+
+    return inst;
 }
 
-void control(instruction_t inst, int opt)
+instruction_t control(instruction_t inst, int opt)
 {
     int value;
     int reg;
-
-    if(IS_HALTED) return;
 
     if(strchr(inst.param, '+'))
     {
@@ -166,7 +175,7 @@ void control(instruction_t inst, int opt)
         inst.runerror = RUNERR_ARG_OVERFLOW;
         // Halt execution
         HALT;
-        return;
+        return inst;
     }
 
     switch(opt)
@@ -178,15 +187,15 @@ void control(instruction_t inst, int opt)
             {
                 inst.synerror = SYNERR_SYNTAX;
                 HALT;
-                return;
+                return inst;
             }
             if(STACK_ISFULL)
             {
                 inst.synerror = SYNERR_PUSH;
                 HALT;
-                return;
+                return inst;
             }
-            if(!strcmp(inst.param, "$R"))
+            if(!strcmp(inst.param, "$R") && !IS_HALTED)
             {
                 if(g_stacktop==NULL) g_stacktop = g_stack;
                 else g_stacktop++;
@@ -199,15 +208,15 @@ void control(instruction_t inst, int opt)
                 {
                     inst.synerror = SYNERR_ARG;
                     HALT;
-                    return;
+                    return inst;
                 }
                 if(value<FP_MINVALUE || value>FP_MAXVALUE)
                 {
                     inst.runerror = RUNERR_ARG_OVERFLOW;
                     HALT;
-                    return;
+                    return inst;
                 }
-                else
+                else if(!IS_HALTED)
                 {
                     g_stacktop++;
                     STACKTOP(0) = double_to_fixed((double) value);
@@ -220,16 +229,16 @@ void control(instruction_t inst, int opt)
             {
                 inst.synerror = SYNERR_SYNTAX;
                 HALT;
-                return;
+                return inst;
             }
             if(STACK_ISEMPTY)
             {
                 inst.synerror = SYNERR_POP;
                 HALT;
-                return;
+                return inst;
             }
-            else if(g_stacktop==g_stack) g_stacktop = NULL;
-            else g_stacktop--;
+            else if(g_stacktop==g_stack) { if(!IS_HALTED) g_stacktop = NULL; }
+            else if(!IS_HALTED) g_stacktop--;
             break;
         case MOV:
             // MOV takes two arguments
@@ -237,144 +246,162 @@ void control(instruction_t inst, int opt)
             {
                 inst.synerror = SYNERR_SYNTAX;
                 HALT;
-                return;
+                return inst;
             }
 
             reg = atoi(inst.param);
             if(strcmp(inst.param, "$R")==0)
             {
                 reg = atoi(inst.param2);
-                if(reg!=0 && (reg>0 && reg<4)) g_memreg[reg-1]=g_regr;
+                if(reg!=0 && (reg>0 && reg<4)) { if(!IS_HALTED) g_memreg[reg-1]=g_regr; }
                 else
                 {
                     inst.synerror = SYNERR_ARG;
                     HALT;
-                    return;
+                    return inst;
                 }
             }
             else if(reg!=0 && (reg>0 && reg<4))
             {
-                if(strcmp(inst.param2, "$R")==0) g_regr=g_memreg[reg-1];
+                if(strcmp(inst.param2, "$R")==0) { if(!IS_HALTED) g_regr=g_memreg[reg-1]; }
                 else
                 {
                     inst.synerror = SYNERR_ARG;
                     HALT;
-                    return;
+                    return inst;
                 }
             }
             else
             {
                 inst.synerror = SYNERR_ARG;
                 HALT;
-                return;
+                return inst;
             }
             break;
         default:
             break;
     }
+
+    return inst;
 }
 
-void io(instruction_t inst, int opt)
+instruction_t io(instruction_t inst, int opt)
 {
-    if(IS_HALTED) return;
-
     // Syntax error:
     // IO operations have no operands
     if(strlen(inst.param)!=0)
     {
         inst.synerror = SYNERR_SYNTAX;
         HALT;
-        return;
+        return inst;
     }
 
-    switch(opt)
+    if(IS_HALTED) return inst;
+
+    else
     {
-        case OUT:
-            printf("\n==> Top of the stack: %f\n\n", fixed_to_double(STACKTOP(0)));
-            break;
-        default:
-            break;
+        switch(opt)
+        {
+            case OUT:
+                printf("\n==> Top of the stack: %f\n\n", fixed_to_double(STACKTOP(0)));
+                break;
+            default:
+                break;
+        }
     }
+
+    return inst;
 }
 
-void branch(instruction_t inst, int opt)
+instruction_t branch(instruction_t inst, int opt)
 {
     int line;
     char *labelname = inst.param;
-
-    if(IS_HALTED) return;
 
     if(strlen(inst.param)==0 || strlen(inst.param2)!=0)
     {
         inst.synerror = SYNERR_SYNTAX;
         HALT;
-        return;
+        return inst;
     }
 
     switch(opt)
     {
         case JMP:
-            if(line=searchlabels(labelname)) { g_jump = 1; g_jumpto = line; }
+            if( (line=searchlabels(labelname)) && !IS_HALTED) { g_jump = 1; g_jumpto = line; }
             else
             {
                 inst.runerror = RUNERR_UNDEF_LABEL;
                 HALT;
-                return;
+                return inst;
             }
             break;
         case BZ:
             if(g_regr==0)
             {
-                if(line=searchlabels(labelname)) { g_jump = 1; g_jumpto = line; }
+                if( (line=searchlabels(labelname)) && !IS_HALTED) { g_jump = 1; g_jumpto = line; }
                 else
                 {
                     inst.runerror = RUNERR_UNDEF_LABEL;
                     HALT;
-                    return;
+                    return inst;
                 }
             }
             break;
         case BNZ:
             if(g_regr!=0)
             {
-                if(line=searchlabels(labelname)) { g_jump = 1; g_jumpto = line; }
+                if( (line=searchlabels(labelname)) && !IS_HALTED) { g_jump = 1; g_jumpto = line; }
                 else
                 {
                     inst.runerror = RUNERR_UNDEF_LABEL;
                     HALT;
-                    return;
+                    return inst;
                 }
             }
             break;
         default:
             break;
     }
+
+    return inst;
 }
 
 void clearstack(void)
 {
-    int iter;
-    for(iter=0; iter<STACK_MAXSIZE; iter++)
+    if(IS_HALTED) return;
+
+    else
     {
-        g_stack[iter]=0;
+        int iter;
+        for(iter=0; iter<STACK_MAXSIZE; iter++)
+        {
+            g_stack[iter]=0;
+        }
+        g_stacktop = NULL;
     }
-    g_stacktop = NULL;
 }
 
-int parseinst(instruction_t inst)
+instruction_t parseinst(instruction_t inst)
 {
-    int opt;
+    // First, check if there are more than two arguments in the instruction
+    if(inst.has_garbage)
+    {
+        inst.synerror = SYNERR_SYNTAX;
+        HALT;
+        return inst;
+    }
 
     // It could be a BST, but this works too.
     if(inst.mne[0]=='A')
     {
-        if(!strcmp(inst.mne, "AND")) arithmetic(inst, AND);
-        else if(!strcmp(inst.mne, "ADD")) arithmetic(inst, ADD);
+        if(!strcmp(inst.mne, "AND")) inst = arithmetic(inst, AND);
+        else if(!strcmp(inst.mne, "ADD")) inst = arithmetic(inst, ADD);
     }
     else if(inst.mne[0]=='B')
     {
-        if(!strcmp(inst.mne, "BNZ")) branch(inst, BNZ);
-        else if(!strcmp(inst.mne, "BZ")) branch(inst, BZ);
+        if(!strcmp(inst.mne, "BNZ")) inst = branch(inst, BNZ);
+        else if(!strcmp(inst.mne, "BZ")) inst = branch(inst, BZ);
     }
     else if(inst.mne[0]=='C')
     {
@@ -382,45 +409,47 @@ int parseinst(instruction_t inst)
     }
     else if(inst.mne[0]=='D')
     {
-        if(!strcmp(inst.mne, "DIV")) arithmetic(inst, DIV);
+        if(!strcmp(inst.mne, "DIV")) inst = arithmetic(inst, DIV);
     }
     else if(inst.mne[0]=='E')
     {
-        if(!strcmp(inst.mne, "EXP")) arithmetic(inst, EXP);
+        if(!strcmp(inst.mne, "EXP")) inst = arithmetic(inst, EXP);
     }
     else if(inst.mne[0]=='J')
     {
-        if(!strcmp(inst.mne, "JMP")) branch(inst, JMP);
+        if(!strcmp(inst.mne, "JMP")) inst = branch(inst, JMP);
     }
     else if(inst.mne[0]=='L')
     {
-        if(!strcmp(inst.mne, "LN")) arithmetic(inst, LN);
+        if(!strcmp(inst.mne, "LN")) inst = arithmetic(inst, LN);
     }
     else if(inst.mne[0]=='M')
     {
-        if(!strcmp(inst.mne, "MIR")) logic(inst, MIR);
-        else if(!strcmp(inst.mne, "MOD")) arithmetic(inst, MOD);
-        else if(!strcmp(inst.mne, "MOV")) control(inst, MOV);
-        else if(!strcmp(inst.mne, "MUL")) arithmetic(inst, MUL);
+        if(!strcmp(inst.mne, "MIR")) inst = logic(inst, MIR);
+        else if(!strcmp(inst.mne, "MOD")) inst = arithmetic(inst, MOD);
+        else if(!strcmp(inst.mne, "MOV")) inst = control(inst, MOV);
+        else if(!strcmp(inst.mne, "MUL")) inst = arithmetic(inst, MUL);
     }
     else if(inst.mne[0]=='N')
     {
-        if(!strcmp(inst.mne, "NOT")) logic(inst, NOT);
+        if(!strcmp(inst.mne, "NOT")) inst = logic(inst, NOT);
     }
     else if(inst.mne[0]=='O')
     {
-        if(!strcmp(inst.mne, "OR")) logic(inst, OR);
-        else if(!strcmp(inst.mne, "OUT")) io(inst, OUT);
+        if(!strcmp(inst.mne, "OR")) inst = logic(inst, OR);
+        else if(!strcmp(inst.mne, "OUT")) inst = io(inst, OUT);
     }
     else if(inst.mne[0]=='P')
     {
-        if(!strcmp(inst.mne, "PUSH")) control(inst, PUSH);
-        else if(!strcmp(inst.mne, "POP")) control(inst, POP);
+        if(!strcmp(inst.mne, "PUSH")) inst = control(inst, PUSH);
+        else if(!strcmp(inst.mne, "POP")) inst = control(inst, POP);
     }
     else if(inst.mne[0]=='S')
     {
-        if(!strcmp(inst.mne, "SUB")) arithmetic(inst, SUB);
+        if(!strcmp(inst.mne, "SUB")) inst = arithmetic(inst, SUB);
     }
     // Instruction doesn't exist
     else inst.synerror = SYNERR_INST;
+
+    return inst;
 }

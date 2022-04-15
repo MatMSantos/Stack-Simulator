@@ -1,0 +1,52 @@
+# a (aceleração) = 5
+# v0 = 14
+# delta s = 70
+
+PUSH 2
+#a
+PUSH 5
+MUL
+POP
+POP
+PUSH $R
+# delta s
+PUSH 70
+MUL
+POP
+POP
+# 2*a*deltaS na pilha
+PUSH $R
+
+# v0
+PUSH 14
+# v0
+PUSH 14
+MUL
+POP
+POP
+# v0^2 e 2*a*deltaS na pilha
+PUSH $R
+
+ADD
+# v0^2 + 2*a*deltaS
+POP
+POP
+
+# [RAÍZ QUADRADA]
+PUSH $R
+FLN
+POP
+PUSH 2
+PUSH $R
+DIV
+POP
+POP
+PUSH $R
+# e=2.71
+PUSH 2.71
+EXP
+POP
+POP
+# V na pilha
+PUSH $R
+OUT 

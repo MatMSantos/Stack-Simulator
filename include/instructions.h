@@ -2,7 +2,6 @@
     #define INSTRUCTIONS_H
 
 #include "stack.h"
-#include "globals.h"
 
 #define MAXSIZE_MNE 4
 #define MAXSIZE_PARAM 6
@@ -19,6 +18,8 @@ typedef struct {
     char mne[MAXSIZE_MNE+1];   // Mnemonic
     char param[MAXSIZE_PARAM+3];
     char param2[MAXSIZE_PARAM2+1];
+
+    int  has_garbage;
     // Should be converted to 16-bit integer: [-32768, 32767]
     // Param is 9 chars in size to account for syntax errors:
     // pppppp/'+'/'e' where '+' means parameter exceeds max size and 'e' means more than one parameter
@@ -28,7 +29,6 @@ typedef struct {
     int  runerror;    // type of runtime error caught
 
     int  parse;    // if instruction should be parsed or not
-    int  label;
 } instruction_t;
 
 /**
@@ -77,46 +77,46 @@ enum runerror_t { RUNERR_NONE, RUNERR_UNDEF_ARG, RUNERR_DIV_BY_ZERO, RUNERR_ARG_
  * Execute arithmetic instruction
  * 
  * in: struct with instruction;
- * out: none
+ * out: struct with instruction;
  * err: none;
  */
-void arithmetic(instruction_t inst, int opt);
+instruction_t arithmetic(instruction_t inst, int opt);
 
 /**
  * Execute logic instruction
  * 
  * in: struct with instruction;
- * out: none
+ * out: struct with instruction;
  * err: none;
  */
-void logic(instruction_t inst, int opt);
+instruction_t logic(instruction_t inst, int opt);
 
 /**
  * Execute control instruction
  *
  * in: struct with instruction;
- * out: none
+ * out: struct with instruction;
  * err: none;
  */
-void control(instruction_t inst, int opt);
+instruction_t control(instruction_t inst, int opt);
 
 /**
  * Execute IO instruction
  * 
  * in: struct with instruction;
- * out: none
+ * out: struct with instruction;
  * err: none;
  */
-void io(instruction_t inst, int opt);
+instruction_t io(instruction_t inst, int opt);
 
 /**
  * Execute branching instruction (unconditionals & conditionals)
  * 
  * in: struct with instruction;
- * out: none
+ * out: struct with instruction;
  * err: none;
  */
-void branch(instruction_t inst, int opt);
+instruction_t branch(instruction_t inst, int opt);
 
 /**
  * Clear stack and set the top of the stack to address zero
@@ -140,10 +140,10 @@ int searchlabels(char *label);
  * Check for valid instructions
  * 
  * in: struct with instruction;
- * out: 
- * err:
+ * out: struct with instruction;
+ * err: none;
  */
-int parseinst(instruction_t inst);
+instruction_t parseinst(instruction_t inst);
 
 
 #endif

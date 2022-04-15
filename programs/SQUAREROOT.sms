@@ -1,0 +1,30 @@
+# sqrt(input) = e^(ln(input)/2)
+# e = 2.71828 
+# Carregar o valor desejado na pilha
+PUSH    input
+# Obtém o logaritimo natural -> ln(input)
+FLN
+# Remove valor da pilha
+POP
+# Carrega o valor 2 na pilha
+PUSH    2
+# Carrega o valor de $R = ln(input)
+PUSH    $R
+# Divide
+DIV
+# Remove valores da pilha
+POP
+POP
+# Carrega o valor de $R (ln(input)/2)
+PUSH    $R
+# Carrega o valor de e na pilha
+PUSH    2.71828
+# Exponencial -> e^$R 
+EXP
+# Remove valores da pilha
+POP
+POP
+# Carrega o valor final na pilha
+PUSH    $R
+# Imprime valor presente n o topo da pilha
+OUT

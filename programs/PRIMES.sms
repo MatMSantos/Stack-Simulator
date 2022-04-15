@@ -1,0 +1,178 @@
+    # se input é 1 -> retorna 2;
+    # se input é 2 -> retorna 3;
+    # se input é >= 3,  
+    # n = input - 1
+    # se n é par, então primo = (6*(input -2)/2) - 1
+    # se n é impar, então primo = (6*(input -1)/2) + 1
+    # Limpa a pilha 
+    CLEAR
+    # Carrega o valor 1 na pilha
+    PUSH    1
+    # Carrega o e-Nésimo número - SUBSTITUIR COM O VALOR DESEJADO
+    PUSH    INPUT 
+    # Carrega o valor 0 na pilha     
+    PUSH    0
+    # ADD -> INPUT + 0 = INPUT, para passar input para o registrador $R
+    ADD
+    # Move do $R para registrador auxiliar 1
+    MOV     $R  1
+    # Remove o topo da pilha (0)
+    POP
+    # SUB -> INPUT - 1 
+    SUB
+    # Carrega resultado no topo da pilha
+    PUSH    $R
+    # Se $R = 0, então é o primeiro número primo, que no caso é 2
+    BZ      FIRST
+    # Se não...
+    # Remove valores da pilha
+    POP
+    POP
+    POP
+    # Carrega o valor 1 na pilha
+    PUSH    1
+    # Carrega $R = INPUT - 1
+    PUSH    $R
+    # SUB -> (INPUT - 1) - 1
+    SUB
+    # Carrega $R = INPUT - 2
+    PUSH    $R 
+    # Se $R = 0, então é o segundo número primo, que no caso é 3
+    BZ      SECOND
+    # Se não...
+    # Remove valores da pilha
+    POP
+    POP 
+    POP
+    # Carrega o valor 1 na pilha
+    PUSH    1
+    # Move o valor que estava armazenado no registrador auxiliar 1 para o $R   
+    MOV     1    $R
+    # Carrega $R = INPUT 
+    PUSH    $R
+    # SUB -> INPUT - 1
+    SUB
+    # Remove valores da pilha
+    POP
+    POP
+    # Carrega o valor 2 na pilha, para checar se é par ou impar
+    PUSH    2
+    # Carrega o valor $R = INPUT - 1
+    PUSH    $R
+    # Move do $R para o registrador auxiliar 2
+    MOV     $R  2
+    # Obtem o resto da divisão $R/2
+    MOD
+    # Remove valores da pilha
+    POP
+    POP
+    # Carrega o valor $R = MOD((INPUT -1)/2)
+    PUSH    $R
+    # Se $R = 0, então (INPUT - 1) é par
+    BZ
+# IF ODD (6*(Input - 2)/2 + 1):
+    # Remove valor da pilha    
+    POP
+    # Carrega o valor 2 na pilha
+    PUSH    1
+    # Move o valor que estava armazenado no registrador auxiliar 2 para o $R   
+    MOV     2   $R
+    # Carrega o valor de $R = Input - 1
+    PUSH    $R
+    # SUB -> (INPUT - 1) - 1
+    SUB
+    # Remove valores da pilha
+    POP
+    POP
+    # Carrega o valor 2 na pilha para fazer a divisão
+    PUSH    2
+    # Carrega o valor de $R = Input - 2
+    PUSH    $R
+    # Divide
+    DIV
+    # Remove valores da pilha
+    POP
+    POP
+    # Carrega o valor de $R = (Input - 2)/2
+    PUSH    $R 
+    # Carrega o valor 6 na pilha
+    PUSH    6
+    # Multiplica 
+    MUL
+    # Remove valores da pilha
+    POP
+    POP
+    # Carrega o valor de $R = 6* (Input - 2)/2
+    PUSH    $R
+    # Carrega o valor de 1 na pilha
+    PUSH    1
+    # ADD -> $R + 1
+    ADD
+    # Remove valores da pilha
+    POP
+    POP
+    # Carrega o valor de $R = (6* (Input - 2)/2) + 1, que é o enésimo número primo
+    PUSH    $R
+    # Pula pro final
+    JMP     END
+# Se o input for 1    
+FIRST:
+    # Remove valores da pilha
+    POP
+    POP
+    POP
+    # Carrega valor 2 na pilha, que é o primeiro número primo
+    PUSH    2
+    # Pula pro final
+    JMP     END
+# Se o input for 2    
+SECOND:
+    # Remove valores da pilha
+    POP
+    POP
+    POP
+    # Carrega valor 3 na pilha, que é o segundo número primo
+    PUSH    3
+    # Pula pro final
+    JMP     END
+# Se input - 1 for par, então (6*(Input - 1)/2 - 1)   
+IF_EVEN:
+    # Remove valor da pilha
+    POP
+    # Carrega o valor 2 na pilha
+    PUSH    2
+    # Move o valor que estava armazenado no registrador auxiliar 2 para o $R   
+    MOV     2   $R
+    # Carrega o valor $R = Input - 1
+    PUSH    $R
+    # Divide -> (Input - 1)/2 
+    DIV
+    # Remove valores da pilha
+    POP
+    POP
+    # Carrega o valor de $R = (Input - 1)/2 
+    PUSH    $R
+    # Carrega o valor de 6 na pilha
+    PUSH    6
+    # Multiplica
+    MUL
+    POP
+    POP
+    # Carrega o valor de 1 na pilha
+    PUSH    1
+    # Carrega o valor de $R = 6* (Input - 1)/2
+    PUSH    $R
+    # SUB -> (6* (Input - 1)/2) - 1
+    SUB
+    # Remove valores da pilha
+    POP
+    POP
+    # Carrega o valor de $R = (6* (Input - 1)/2) - 1
+    PUSH    $R
+# Final do programa e ponto de pulo    
+END:
+    # Imprime o topo da pilha
+    OUT
+
+
+  
