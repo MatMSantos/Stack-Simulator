@@ -11,7 +11,7 @@ CLEAR
 PUSH    1
 
 # Carrega o e-Nésimo número - SUBSTITUIR COM O VALOR DESEJADO
-PUSH    INPUT 
+PUSH    1
 
 # Carrega o valor 0 na pilha     
 PUSH    0

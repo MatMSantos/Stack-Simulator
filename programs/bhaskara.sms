@@ -44,9 +44,9 @@ DIV
 POP
 POP
 PUSH $R
-# e= 2.71
-PUSH 2.71
-EXP
+# e= 2.71828
+PUSH 2.71828
+POW
 POP
 POP
 MOV $R 2
@@ -111,4 +111,5 @@ MOV 1 $R
 # x' e x'' na pilha (x' topo)
 PUSH $R
 OUT
+POP
 OUT

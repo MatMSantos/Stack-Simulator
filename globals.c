@@ -16,7 +16,7 @@ int g_jumpto = 0;
 /**
  * Stack
  */
-uint16_t  g_memreg[MEMREGSIZE];
-uint16_t  g_regr;
-uint16_t  g_stack[STACK_MAXSIZE];
-uint16_t *g_stacktop;
+int16_t  g_memreg[MEMREGSIZE];
+int16_t  g_regr;
+int16_t  g_stack[STACK_MAXSIZE];
+int16_t *g_stacktop;

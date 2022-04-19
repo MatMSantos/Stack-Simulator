@@ -25,9 +25,9 @@
     /**
      * Stack
      */
-    extern uint16_t  g_memreg[MEMREGSIZE];
-    extern uint16_t  g_regr;
-    extern uint16_t  g_stack[STACK_MAXSIZE];
-    extern uint16_t *g_stacktop;
+    extern int16_t  g_memreg[MEMREGSIZE];
+    extern int16_t  g_regr;
+    extern int16_t  g_stack[STACK_MAXSIZE];
+    extern int16_t *g_stacktop;
 
 #endif

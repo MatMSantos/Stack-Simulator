@@ -13,7 +13,7 @@
  * out: value represented by a double
  * err: none
  */
-double fixed_to_double(uint16_t input);
+double fixed_to_double(int16_t input);
 
 /**
  * Convert from double to 16-bit fixed point
@@ -22,6 +22,6 @@ double fixed_to_double(uint16_t input);
  * out: value represented by a 16-bit unsigned int (11.5 fixed-point)
  * err: none
  */
-uint16_t double_to_fixed(double input);
+int16_t double_to_fixed(double input);
 
 #endif
