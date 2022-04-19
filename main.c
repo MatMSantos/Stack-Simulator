@@ -68,13 +68,11 @@ int main(int argc, char *argv[]) {
         {
             inst = parseinst(inst);
 
-            
             _printinst(inst);
             _statusstack();
             _statusregr();
             _statusmem();
             fgetc(stdin);
-            
 
             if(inst.synerror != SYNERR_NONE)
             {

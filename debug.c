@@ -13,7 +13,10 @@ void _printinst(instruction_t inst) {
     printf("\tPARAM 2: %s\n", inst.param2);
     printf("\tHAS GARBAGE: %d\n", inst.has_garbage);
     printf("\tLINE: %d\n", inst.line);
-    printf("\tSYNTAX ERROR: %d\n", inst.synerror);
+    if(inst.synerror) {
+    printf("\tSYNTAX ERROR: %d (%03d)\n", inst.synerror, inst.synerror-1); }
+    else {
+    printf("\tSYNTAX ERROR: %d (%03d)\n", inst.synerror, inst.synerror); }
     printf("\tRUNTIME ERROR: %d\n", inst.runerror);
     printf("\tPARSE: %d\n\n", inst.parse);
 }

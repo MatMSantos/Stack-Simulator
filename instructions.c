@@ -38,6 +38,14 @@ instruction_t arithmetic(instruction_t inst, int opt)
     double above;
     double below;
 
+    // First, check if there are more than two arguments in the instruction
+    if(inst.has_garbage)
+    {
+        inst.synerror = SYNERR_SYNTAX;
+        HALT;
+        return inst;
+    }
+
     // Syntax error:
     // Arithmetic operations have no operands
     if(strlen(inst.param)!=0)
@@ -110,6 +118,15 @@ instruction_t arithmetic(instruction_t inst, int opt)
 
 instruction_t logic(instruction_t inst, int opt)
 {
+
+    // First, check if there are more than two arguments in the instruction
+    if(inst.has_garbage)
+    {
+        inst.synerror = SYNERR_SYNTAX;
+        HALT;
+        return inst;
+    }
+
     // Syntax error:
     // Logic operations have no operands
     if(strlen(inst.param)!=0)
@@ -185,6 +202,14 @@ instruction_t control(instruction_t inst, int opt)
 {
     double value;
     int reg;
+
+    // First, check if there are more than two arguments in the instruction
+    if(inst.has_garbage)
+    {
+        inst.synerror = SYNERR_SYNTAX;
+        HALT;
+        return inst;
+    }
 
     if(strchr(inst.param, '+'))
     {
@@ -305,6 +330,15 @@ instruction_t control(instruction_t inst, int opt)
 
 instruction_t io(instruction_t inst, int opt)
 {
+
+    // First, check if there are more than two arguments in the instruction
+    if(inst.has_garbage)
+    {
+        inst.synerror = SYNERR_SYNTAX;
+        HALT;
+        return inst;
+    }
+
     // Syntax error:
     // IO operations have no operands
     if(strlen(inst.param)!=0)
@@ -335,6 +369,14 @@ instruction_t branch(instruction_t inst, int opt)
 {
     int line;
     char *labelname = inst.param;
+
+    // First, check if there are more than two arguments in the instruction
+    if(inst.has_garbage)
+    {
+        inst.synerror = SYNERR_SYNTAX;
+        HALT;
+        return inst;
+    }
 
     if(strlen(inst.param)==0 || strlen(inst.param2)!=0)
     {
@@ -385,6 +427,28 @@ instruction_t branch(instruction_t inst, int opt)
     return inst;
 }
 
+instruction_t stack(instruction_t inst, int opt)
+{
+    if(strlen(inst.param)!=0)
+    {
+        inst.synerror = SYNERR_SYNTAX;
+        HALT;
+        return inst;
+    }
+
+    if(IS_HALTED) return inst;
+
+    else switch(opt)
+    {
+        case CLEAR:
+            clearstack();
+        default:
+            break;
+    }
+
+    return inst;
+}
+
 void clearstack(void)
 {
     if(IS_HALTED) return;
@@ -402,44 +466,43 @@ void clearstack(void)
 
 instruction_t parseinst(instruction_t inst)
 {
-    // First, check if there are more than two arguments in the instruction
-    if(inst.has_garbage)
-    {
-        inst.synerror = SYNERR_SYNTAX;
-        HALT;
-        return inst;
-    }
-
     // It could be a BST, but this works too.
     if(inst.mne[0]=='A')
     {
         if(!strcmp(inst.mne, "AND")) inst = arithmetic(inst, AND);
         else if(!strcmp(inst.mne, "ADD")) inst = arithmetic(inst, ADD);
+        else inst.synerror = SYNERR_INST;
     }
     else if(inst.mne[0]=='B')
     {
         if(!strcmp(inst.mne, "BNZ")) inst = branch(inst, BNZ);
         else if(!strcmp(inst.mne, "BZ")) inst = branch(inst, BZ);
+        else inst.synerror = SYNERR_INST;
     }
     else if(inst.mne[0]=='C')
     {
-        if(!strcmp(inst.mne, "CLEAR")) clearstack();
+        if(!strcmp(inst.mne, "CLEAR")) inst = stack(inst, CLEAR);
+        else inst.synerror = SYNERR_INST;
     }
     else if(inst.mne[0]=='D')
     {
         if(!strcmp(inst.mne, "DIV")) inst = arithmetic(inst, DIV);
+        else inst.synerror = SYNERR_INST;
     }
     else if(inst.mne[0]=='E')
     {
         if(!strcmp(inst.mne, "EXP")) inst = arithmetic(inst, EXP);
+        else inst.synerror = SYNERR_INST;
     }
     else if(inst.mne[0]=='J')
     {
         if(!strcmp(inst.mne, "JMP")) inst = branch(inst, JMP);
+        else inst.synerror = SYNERR_INST;
     }
     else if(inst.mne[0]=='L')
     {
         if(!strcmp(inst.mne, "LN")) inst = arithmetic(inst, LN);
+        else inst.synerror = SYNERR_INST;
     }
     else if(inst.mne[0]=='M')
     {
@@ -447,28 +510,31 @@ instruction_t parseinst(instruction_t inst)
         else if(!strcmp(inst.mne, "MOD")) inst = arithmetic(inst, MOD);
         else if(!strcmp(inst.mne, "MOV")) inst = control(inst, MOV);
         else if(!strcmp(inst.mne, "MUL")) inst = arithmetic(inst, MUL);
+        else inst.synerror = SYNERR_INST;
     }
     else if(inst.mne[0]=='N')
     {
         if(!strcmp(inst.mne, "NOT")) inst = logic(inst, NOT);
+        else inst.synerror = SYNERR_INST;
     }
     else if(inst.mne[0]=='O')
     {
         if(!strcmp(inst.mne, "OR")) inst = logic(inst, OR);
         else if(!strcmp(inst.mne, "OUT")) inst = io(inst, OUT);
+        else inst.synerror = SYNERR_INST;
     }
     else if(inst.mne[0]=='P')
     {
         if(!strcmp(inst.mne, "PUSH")) inst = control(inst, PUSH);
         else if(!strcmp(inst.mne, "POP")) inst = control(inst, POP);
         else if(!strcmp(inst.mne, "POW")) inst = arithmetic(inst, POW);
+        else inst.synerror = SYNERR_INST;
     }
     else if(inst.mne[0]=='S')
     {
         if(!strcmp(inst.mne, "SUB")) inst = arithmetic(inst, SUB);
+        else inst.synerror = SYNERR_INST;
     }
-    // Instruction doesn't exist
-    else inst.synerror = SYNERR_INST;
 
     return inst;
 }

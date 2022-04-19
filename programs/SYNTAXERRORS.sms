@@ -1,0 +1,12 @@
+# Programa de teste para demonstrar erros de sintaxe em um arquivo .sms
+# Lembrando que:
+# 000 - Erro de sintaxe
+# 001 - Instrução inválida
+# 002 - Argumento(s) inválido(s)
+# 003 - POP em pilha vazia
+# 004 - PUSH em pilha cheia
+
+CLEAR 1
+SCHMUFF
+PUSH A
+OUT

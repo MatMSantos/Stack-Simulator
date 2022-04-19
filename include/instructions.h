@@ -57,6 +57,11 @@ enum branch_t { JMP, BZ, BNZ };
 enum io_t { OUT };
 
 /**
+ * Other stack operations
+ */
+enum stack_t { CLEAR };
+
+/**
  * Syntax errors
  */
 enum synerror_t { SYNERR_NONE, SYNERR_SYNTAX, SYNERR_INST, SYNERR_ARG, SYNERR_POP, SYNERR_PUSH };
