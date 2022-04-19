@@ -1,9 +1,9 @@
 # sqrt(input) = e^(ln(input)/2)
 # e = 2.71828 
 # Carregar o valor desejado na pilha
-PUSH    input
+PUSH 9
 # Obtém o logaritimo natural -> ln(input)
-FLN
+LN
 # Remove valor da pilha
 POP
 # Carrega o valor 2 na pilha
@@ -20,7 +20,7 @@ PUSH    $R
 # Carrega o valor de e na pilha
 PUSH    2.71828
 # Exponencial -> e^$R 
-EXP
+POW
 # Remove valores da pilha
 POP
 POP

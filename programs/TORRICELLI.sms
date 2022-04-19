@@ -34,7 +34,7 @@ POP
 
 # [RAÍZ QUADRADA]
 PUSH $R
-FLN
+LN
 POP
 PUSH 2
 PUSH $R
@@ -43,8 +43,8 @@ POP
 POP
 PUSH $R
 # e=2.71
-PUSH 2.71
-EXP
+PUSH 2.71828
+POW
 POP
 POP
 # V na pilha

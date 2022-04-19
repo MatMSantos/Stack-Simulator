@@ -31,6 +31,15 @@ void _check(void);
 void _statusstack(void);
 
 /**
+ * (DEBUG) Print the content of the registor $R on the screen
+ * 
+ * in: none;
+ * out: none;
+ * err: none;
+ */
+void _statusregr(void);
+
+/**
  * (DEBUG) Print the contents of the memory registers on the screen
  * 
  * in: none;

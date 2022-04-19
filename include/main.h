@@ -24,7 +24,7 @@
  * Error messages (bash)
  */
 #define _ERRMSG_NOARGS "Error: no arguments, you must specify at least one. \n\nAborting the program..."
-#define _ERRMSG_SYNERR_NUM "Error: found %d syntax/runtime errors in the source code."
+#define _ERRMSG_SYNERR_NUM "Error: found %d syntax/runtime errors in the source code.\n"
 
 #define _ERRMSG_SYNERR "Syntax error %03d in line %d\n"
 

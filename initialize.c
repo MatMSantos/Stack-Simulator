@@ -41,4 +41,5 @@ void scanlabelsinfile(FILE *fp) {
         currentline++;
     }
     rewind(fp);
+    g_labelindex=0;
 }

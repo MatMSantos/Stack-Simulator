@@ -1,12 +1,23 @@
 #include <string.h>
-
 #include <stdlib.h>
+#include <ctype.h>
+#include <math.h>
 
 #include "include/debug.h"
 #include "include/globals.h"
 #include "include/filehandler.h"
 #include "include/instructions.h"
 #include "include/fixedpoint.h"
+
+int hasalpha(char *str)
+{
+    int iter;
+    for(iter=0; iter<strlen(str); iter++)
+    {
+        if(isalpha(str[iter])) return 1;
+    }
+    return 0;
+}
 
 int searchlabels(char *label)
 {
@@ -16,7 +27,7 @@ int searchlabels(char *label)
     {
         if(strcmp(g_listoflabels[iter].name, label)==0)
         {
-            return g_listoflabels[iter].line;
+            return g_listoflabels[iter].line+1;
         }
     }
     return 0;
@@ -40,15 +51,17 @@ instruction_t arithmetic(instruction_t inst, int opt)
     // Can't perform arithmetic operations on an empty stack or with only one value
     if(STACK_ISEMPTY || g_stacktop==g_stack)
     {
-        // Return error
-        inst.runerror = RUNERR_UNDEF_ARG;
-        // Halt execution
-        HALT;
-        return inst;
+        if (opt!=LN && opt!=EXP)
+        {
+            // Return error
+            inst.runerror = RUNERR_UNDEF_ARG;
+            // Halt execution
+            HALT;
+            return inst;
+        }
     }
 
     if(IS_HALTED) return inst;
-
     else
     {
         // Initializations before arithmetic operations
@@ -72,8 +85,11 @@ instruction_t arithmetic(instruction_t inst, int opt)
                     inst.runerror = RUNERR_DIV_BY_ZERO;
                     HALT;
                     return inst;
-                } 
+                }
                 else g_regr = double_to_fixed(above/below);
+                break;
+            case POW:
+                g_regr = double_to_fixed(pow(above, below));
                 break;
             case MOD:
                 g_regr = double_to_fixed(fmod(above, below));
@@ -167,7 +183,7 @@ instruction_t logic(instruction_t inst, int opt)
 
 instruction_t control(instruction_t inst, int opt)
 {
-    int value;
+    double value;
     int reg;
 
     if(strchr(inst.param, '+'))
@@ -204,8 +220,8 @@ instruction_t control(instruction_t inst, int opt)
             }
             else
             {
-                value = atoi(inst.param);
-                if(strcmp(inst.param,"0") && value==0)
+                value = atof(inst.param);
+                if(hasalpha(inst.param) && strcmp(inst.param, "$R") && !value)
                 {
                     inst.synerror = SYNERR_ARG;
                     HALT;
@@ -221,7 +237,7 @@ instruction_t control(instruction_t inst, int opt)
                 {
                     if(g_stacktop==NULL) g_stacktop = g_stack;
                     else g_stacktop++;
-                    STACKTOP(0) = double_to_fixed((double) value);
+                    STACKTOP(0) = double_to_fixed(value);
                 }
             }
             break;
@@ -255,7 +271,7 @@ instruction_t control(instruction_t inst, int opt)
             if(strcmp(inst.param, "$R")==0)
             {
                 reg = atoi(inst.param2);
-                if(reg!=0 && (reg>0 && reg<4)) { if(!IS_HALTED) g_memreg[reg-1]=g_regr; }
+                if(reg>0 && reg<=4) { if(!IS_HALTED) g_memreg[reg-1]=g_regr; }
                 else
                 {
                     inst.synerror = SYNERR_ARG;
@@ -263,7 +279,7 @@ instruction_t control(instruction_t inst, int opt)
                     return inst;
                 }
             }
-            else if(reg!=0 && (reg>0 && reg<4))
+            else if(reg>0 && reg<=4)
             {
                 if(strcmp(inst.param2, "$R")==0) { if(!IS_HALTED) g_regr=g_memreg[reg-1]; }
                 else
@@ -445,6 +461,7 @@ instruction_t parseinst(instruction_t inst)
     {
         if(!strcmp(inst.mne, "PUSH")) inst = control(inst, PUSH);
         else if(!strcmp(inst.mne, "POP")) inst = control(inst, POP);
+        else if(!strcmp(inst.mne, "POW")) inst = arithmetic(inst, POW);
     }
     else if(inst.mne[0]=='S')
     {

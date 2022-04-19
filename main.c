@@ -23,7 +23,7 @@
     - Stack size: 128 words
     - Registers: $R + 4 Memory Registers
     - Instructions:
-        - Arithmetic: 'ADD', 'SUB', 'MUL', 'DIV', 'MOD', 'LN', 'EXP'
+        - Arithmetic: 'ADD', 'SUB', 'MUL', 'DIV', 'POW', 'MOD', 'LN', 'EXP'
         - Logic: 'NOT', 'OR', 'AND', 'MIR' (mirror bits in number)
         - Control: 'PUSH', 'POP', 'MOV'
         - Branching: 'JMP', 'BZ', 'BNZ'
@@ -64,10 +64,17 @@ int main(int argc, char *argv[]) {
 
     while((inst = readline(fp)).line!=EOF)
     {
-        _printinst(inst);
         if(inst.parse)
         {
             inst = parseinst(inst);
+
+            /*
+            _printinst(inst);
+            _statusstack();
+            _statusregr();
+            _statusmem();
+            fgetc(stdin);
+            */
 
             if(inst.synerror != SYNERR_NONE)
             {
@@ -77,7 +84,6 @@ int main(int argc, char *argv[]) {
                 if(prntlog) fprintf(stderr, _ERRMSG_SYNERR, inst.synerror-1, inst.line);
             }
         }
-        getchar();
     }
 
     if(num_errors>0) printf(_ERRMSG_SYNERR_NUM, num_errors);

@@ -46,6 +46,17 @@ void gotoline(FILE *fp, int line) {
     }
 }
 
+int checklineforlabels(int line) {
+    g_labelindex = 0;
+    while(g_listoflabels[g_labelindex].line <= line)
+    {
+        if(g_listoflabels[g_labelindex].line==line) return 1;
+        g_labelindex++;
+    }
+    g_labelindex = 0;
+    return 0;
+}
+
 FILE *openfile(char name[]) {
 
     FILE *fp;
@@ -106,11 +117,11 @@ instruction_t readline(FILE *fp) {
     if(g_jump) { line = g_jumpto; gotoline(fp, g_jumpto); g_jump = 0; }
 
     if(fgets(lineread, MAXSIZE_LINE, fp)==NULL) { inst.line=EOF; return inst; }
-
+    
     // We need to make sure the file pointer is at the next line after this first read
     if(lineread[strlen(lineread)-1]!='\n')
     {
-        if(~fgetc(fp)) line_has_garbage = gotoeol(fp); //if not at eof
+        line_has_garbage = gotoeol(fp); //if not at eof
     }
 
     /**
@@ -121,6 +132,8 @@ instruction_t readline(FILE *fp) {
      */
     ignorespaces(&lp);
     if(*lp=='#'||*lp=='\0'||*lp=='\n') { line++; inst.parse=0; return inst; }
+
+    if(checklineforlabels(line)) { line++; inst.parse = 0; return inst; }
 
     stoupper(lineread);
 

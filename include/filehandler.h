@@ -13,7 +13,7 @@
 #define _ERRMSG_WRONG_EXTENSION "Unsupported extension"
 
 #define MAXSIZE_NAMELEN 30
-#define MAXSIZE_LINE 14
+#define MAXSIZE_LINE 30
 #define MAXSIZE_LABEL 8
 
 typedef struct {
@@ -56,6 +56,15 @@ int gotoeol(FILE *fp);
  * err: none;
  */
 void gotoline(FILE* fp, int line);
+
+/**
+ * Search for line number in database, return if there is a label
+ * 
+ * in: line number;
+ * out: 1 if there is a label, 0 if not;
+ * err: none;
+ */
+int checklineforlabels(int line);
 
 /**
  * Open file

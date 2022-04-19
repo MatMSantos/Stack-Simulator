@@ -4,7 +4,7 @@
 #include "stack.h"
 
 #define MAXSIZE_MNE 5
-#define MAXSIZE_PARAM 6
+#define MAXSIZE_PARAM 11
 #define MAXSIZE_PARAM2 3
 
 #define HALT g_execute=0
@@ -34,7 +34,7 @@ typedef struct {
 /**
  * Arithmetic operations
  */
-enum math_t { ADD, SUB, MUL, DIV, MOD, LN, EXP };
+enum math_t { ADD, SUB, MUL, DIV, POW, MOD, LN, EXP };
 
 /**
  * Logic operations
@@ -135,6 +135,15 @@ void clearstack(void);
  * err: none;
  */
 int searchlabels(char *label);
+
+/**
+ * Check if string passed has alphabetic characters
+ * 
+ * in: strin;
+ * out: 1 if true, 0 if false;
+ * err: none;
+ */
+int hasalpha(char *str);
 
 /**
  * Check for valid instructions
