@@ -19,18 +19,18 @@ Stack machine architecture designed in C, complete with its own Assembly languag
                   <Br>'MOD' (modulus),
                   <Br>'LN'  (natural logarithm),
                   <Br>'EXP' (exponential base e)
-    - Logic: 'NOT' (bitwise not operation),
+    - Logic: <br>'NOT' (bitwise not operation),
              <Br>'OR' (bitwise or operation),
              <Br>'AND' (bitwise and operation),
              <Br>'MIR' (mirror bits in number)
-    - Control: 'PUSH' (push to stack),
+    - Control: <br>'PUSH' (push to stack),
                <Br>'POP' (pop from stack),
                <Br>'MOV' (move from register->memory or memory->register)
-    - Branching: 'JMP' (jump to label),
+    - Branching: <br>'JMP' (jump to label),
                  <Br>'BZ' (branch to label if zero),
                  <Br>'BNZ' (branch to label if not zero)
-    - IO: 'OUT' (print top of the stack)
-    - Stack: 'CLEAR' (clears the stack)
+    - IO: <br>'OUT' (print top of the stack)
+    - Stack: <br>'CLEAR' (clears the stack)
 - Syntax/runtime error handling
 
 ***
