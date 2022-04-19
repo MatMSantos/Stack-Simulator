@@ -3,26 +3,34 @@ Stack machine architecture designed in C, complete with its own Assembly languag
 
 ### How to use:
 - Reads .msm assembly files, written using the instructions described below.
+- Syntax: stack-simulator [-l] some_program.sms
+    [-l]: print log to screen
 
 ### Features:
 - 16-bit word size
 - 128 word stack
-- 12 instructions, divided into four categories:
-    - Arithmetic: 'ADD', 'SUB', 'MUL', 'DIV', 'MOD'
-    - Logic: 'NOT', 'OR', 'AND', 'MIR' (mirror bits in number)
-    - Control: 'PUSH', 'POP'
+- 20 instructions, divided into six categories:
+    - Arithmetic: (all operations performed with top of the stack preceding value below)
+                  'ADD' (addition),
+                  'SUB' (subtraction),
+                  'MUL' (multiplication),
+                  'DIV' (division),
+                  'POW' (power),
+                  'MOD' (modulus),
+                  'LN'  (natural logarithm),
+                  'EXP' (exponential base e)
+    - Logic: 'NOT' (bitwise not operation),
+             'OR' (bitwise or operation),
+             'AND' (bitwise and operation),
+             'MIR' (mirror bits in number)
+    - Control: 'PUSH' (push to stack),
+               'POP' (pop from stack),
+               'MOV' (move from register->memory or memory->register)
+    - Branching: 'JMP' (jump to label),
+                 'BZ' (branch to label if zero),
+                 'BNZ' (branch to label if not zero)
     - IO: 'OUT' (print top of the stack)
-- Syntax error
+    - Stack: 'CLEAR' (clears the stack)
+- Syntax/runtime error handling
 
 ***
-
-### How it works:
-
-
-### Next on the list:
-
-- Program arguments:
-    - '-F': prints output to a file
-
-- Functions:
-    - Checks if argument '-F' was passed. Returns 1 if it was, 0 if it was not.
