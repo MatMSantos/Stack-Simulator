@@ -4,11 +4,11 @@
 #include <string.h>
 #include <ctype.h> //toupper()
 
-#include "include/debug.h"
-#include "include/globals.h"
-#include "include/filehandler.h"
-#include "include/instructions.h"
-#include "include/stack.h"
+#include "../include/debug.h"
+#include "../include/globals.h"
+#include "../include/filehandler.h"
+#include "../include/instructions.h"
+#include "../include/stack.h"
 
 void ignorespaces(char **str) {
     while(**str==' ') (*str)++;

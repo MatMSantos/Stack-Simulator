@@ -1,38 +1,45 @@
 # a -> 2
 # b -> 5
 # c -> 3
-#b
-PUSH 5
-#b
-PUSH 5
+# Calculo do Delta
+PUSH    2
+# COLOCAR B AQUI
+PUSH    5
+PUSH    0
+ADD
+MOV     $R  3
+POP
+# B^2
+POW
+POP
+POP
+MOV $R   1
+PUSH    -4
+# COLOCAR A AQUI
+PUSH    2
+PUSH    0
+ADD
+MOV     $R  4
+POP
 MUL
 POP
 POP
-# b^2 -> Registrador 1
-MOV $R 1
-#a
-PUSH 2
-PUSH 4
+PUSH    $R
+# COLOCAR C AQUI
+PUSH    3
 MUL
 POP
 POP
-PUSH $R
-#c
-PUSH 3
-MUL
+MOV $R  2
+MOV 1   $R
+PUSH    $R
+MOV 2   $R
+PUSH    $R
+ADD
 POP
 POP
-# 4ac na pilha
-PUSH $R
-MOV 1 $R
-PUSH $R
-# b^2 - 4ac
-SUB
-POP
-POP
-# Delta no Registrador 1
-MOV $R 1
-# [RAÍZ QUADRADA] 
+MOV $R  1
+# [RAÍZ QUADRADA]
 # Pilha vazia e raíz quadrada de Delta no Registrador 2
 MOV 1 $R
 PUSH $R
@@ -50,66 +57,57 @@ POW
 POP
 POP
 MOV $R 2
-#b
-PUSH 4
+# -B
+MOV  3  $R
+PUSH $R
 PUSH 0
 SUB
 POP
 POP
-# -b no Registrador 3
-MOV $R 3
-MOV 2 $R
+MOV $R  3
+# 2a
+MOV     4   $R
+PUSH    $R
+PUSH    2
+MUL
+POP
+POP
+MOV     $R  4
+# -B + Delta /2
+MOV  2  $R
 PUSH $R
-# -b e Raíz quadrada de Delta na Pilha 
-MOV 3 $R
+MOV  3  $R
 PUSH $R
 ADD
-# -b + raíz quadrada de Delta no Reg 1
-MOV $R 1
 POP
 POP
-#a
-PUSH 2
-PUSH 2
-MUL
-MOV $R 4
-POP
-POP
-# 2a na pilha e no Reg 4
-PUSH $R
-MOV 1 $R
-# Pilha: -b + Sqrt Delta e 2a
-PUSH $R
+MOV  $R 1
+MOV  4  $R
+PUSH    $R
+MOV  1  $R
+PUSH    $R
 DIV
-MOV $R 1
 POP
-# x' no Reg 1
 POP
-MOV 2 $R
-# Sqrt Delta na pilha
+PUSH    $R
+# -B - Delta /2
+MOV  2  $R
 PUSH $R
-MOV 3 $R
-# -b e Sqrt Delta na pilha
-PUSH  $R
+MOV  3  $R
+PUSH $R
 SUB
 POP
 POP
-# -b - Sqrt Delta no Reg 3
-MOV $R 3
-# 2a na pilha
-MOV 4 $R
-PUSH $R
-MOV 3 $R
-# [-b-SqrtDelta] e 2a na pilha 
-PUSH $R
+MOV  $R 1
+MOV  4  $R
+PUSH    $R
+MOV  1  $R
+PUSH    $R
 DIV
 POP
 POP
-# x'' na pilha
-PUSH $R
-MOV 1 $R
-# x' e x'' na pilha (x' topo)
-PUSH $R
+PUSH    $R 
+#IMPRIME
 OUT
 POP
 OUT

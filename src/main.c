@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "include/debug.h"
-#include "include/globals.h"
-#include "include/main.h"
-#include "include/initialize.h"
-#include "include/instructions.h"
-#include "include/filehandler.h"
+#include "../include/debug.h"
+#include "../include/main.h"
+#include "../include/initialize.h"
+#include "../include/instructions.h"
+#include "../include/filehandler.h"
 
 #define USAGE_ "%s [-l] [] "
 
@@ -68,11 +67,13 @@ int main(int argc, char *argv[]) {
         {
             inst = parseinst(inst);
 
+            /*
             _printinst(inst);
             _statusstack();
             _statusregr();
             _statusmem();
             fgetc(stdin);
+            */
 
             if(inst.synerror != SYNERR_NONE)
             {

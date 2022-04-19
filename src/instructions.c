@@ -3,11 +3,11 @@
 #include <ctype.h>
 #include <math.h>
 
-#include "include/debug.h"
-#include "include/globals.h"
-#include "include/filehandler.h"
-#include "include/instructions.h"
-#include "include/fixedpoint.h"
+#include "../include/debug.h"
+#include "../include/globals.h"
+#include "../include/filehandler.h"
+#include "../include/instructions.h"
+#include "../include/fixedpoint.h"
 
 int hasalpha(char *str)
 {

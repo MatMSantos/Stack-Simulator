@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <math.h>
 
-#include "include/fixedpoint.h"
+#include "../include/fixedpoint.h"
 
 double fixed_to_double(int16_t input)
 {

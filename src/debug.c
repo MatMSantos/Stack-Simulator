@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "include/debug.h"
-#include "include/fixedpoint.h"
-#include "include/instructions.h"
-#include "include/globals.h"
+#include "../include/debug.h"
+#include "../include/fixedpoint.h"
+#include "../include/instructions.h"
+#include "../include/globals.h"
 
 void _printinst(instruction_t inst) {
     printf("===DEBUG===\nInstruction: \n\n");
@@ -13,7 +13,7 @@ void _printinst(instruction_t inst) {
     printf("\tPARAM 2: %s\n", inst.param2);
     printf("\tHAS GARBAGE: %d\n", inst.has_garbage);
     printf("\tLINE: %d\n", inst.line);
-    if(inst.synerror) {
+    if(inst.synerror!=0) {
     printf("\tSYNTAX ERROR: %d (%03d)\n", inst.synerror, inst.synerror-1); }
     else {
     printf("\tSYNTAX ERROR: %d (%03d)\n", inst.synerror, inst.synerror); }
