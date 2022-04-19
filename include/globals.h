@@ -5,6 +5,10 @@
     #include "filehandler.h"
     #include "stack.h"
 
+    #define MEMREGSIZE 4
+    #define STACK_MAXSIZE 128
+    #define MAXNUM_LABELS 100
+
     /**
      * File handler
      */

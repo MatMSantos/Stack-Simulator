@@ -4,6 +4,7 @@
 #include <string.h>
 #include <ctype.h> //toupper()
 
+#include "include/debug.h"
 #include "include/globals.h"
 #include "include/filehandler.h"
 #include "include/instructions.h"
@@ -80,7 +81,7 @@ FILE *openfile(char name[]) {
 // I mean, it works... Mostly. But I can think of several ways I could rewrite this.
 // I didn't want to start from scratch all over again, so I just kept on building upon this
 // monstrosity of ineffectiveness.
-instruction_t readline(FILE *fp, int jumpto) {
+instruction_t readline(FILE *fp) {
 
     static int line = 1;
     instruction_t inst = { .mne="", .param="", .param2="", .has_garbage=0,
@@ -102,7 +103,7 @@ instruction_t readline(FILE *fp, int jumpto) {
     char *garbage;
 
     // Check if there was a jump called
-    if(g_jump) { line = g_jumpto; gotoline(fp, jumpto); g_jump = 0; }
+    if(g_jump) { line = g_jumpto; gotoline(fp, g_jumpto); g_jump = 0; }
 
     if(fgets(lineread, MAXSIZE_LINE, fp)==NULL) { inst.line=EOF; return inst; }
 

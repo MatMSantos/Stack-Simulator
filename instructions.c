@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 
+#include "include/debug.h"
 #include "include/globals.h"
 #include "include/filehandler.h"
 #include "include/instructions.h"
@@ -218,7 +219,8 @@ instruction_t control(instruction_t inst, int opt)
                 }
                 else if(!IS_HALTED)
                 {
-                    g_stacktop++;
+                    if(g_stacktop==NULL) g_stacktop = g_stack;
+                    else g_stacktop++;
                     STACKTOP(0) = double_to_fixed((double) value);
                 }
             }

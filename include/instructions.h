@@ -3,7 +3,7 @@
 
 #include "stack.h"
 
-#define MAXSIZE_MNE 4
+#define MAXSIZE_MNE 5
 #define MAXSIZE_PARAM 6
 #define MAXSIZE_PARAM2 3
 
@@ -59,7 +59,7 @@ enum io_t { OUT };
 /**
  * Syntax errors
  */
-enum synerror_t { SYNERR_NONE, SYNERR_SYNTAX=8, SYNERR_INST, SYNERR_ARG, SYNERR_POP, SYNERR_PUSH };
+enum synerror_t { SYNERR_NONE, SYNERR_SYNTAX, SYNERR_INST, SYNERR_ARG, SYNERR_POP, SYNERR_PUSH };
 /**
  * Runtime errors
  */

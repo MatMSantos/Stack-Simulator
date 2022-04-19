@@ -1,4 +1,4 @@
-#include "include/filehandler.h"
+#include "include/globals.h"
 
 /**
  * File handler

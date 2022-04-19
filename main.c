@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "include/debug.h"
 #include "include/globals.h"
-
 #include "include/main.h"
 #include "include/initialize.h"
 #include "include/instructions.h"
 #include "include/filehandler.h"
 
-#define USAGE_ "%s [-f] [] "
+#define USAGE_ "%s [-l] [] "
 
 /* 
 ====== STACK MACHINE SIMULATOR ======
@@ -21,11 +21,12 @@
 
     - Word size: 16 bit
     - Stack size: 128 words
-    - Registers: $R
+    - Registers: $R + 4 Memory Registers
     - Instructions:
-        - Arithmetic: 'ADD', 'SUB', 'MUL', 'DIV', 'MOD'
+        - Arithmetic: 'ADD', 'SUB', 'MUL', 'DIV', 'MOD', 'LN', 'EXP'
         - Logic: 'NOT', 'OR', 'AND', 'MIR' (mirror bits in number)
-        - Control: 'PUSH', 'POP'
+        - Control: 'PUSH', 'POP', 'MOV'
+        - Branching: 'JMP', 'BZ', 'BNZ'
         - IO: 'OUT' (print top of the stack)
     - Error messages:
         - '000': Syntax error
@@ -38,25 +39,32 @@
 */
 
 int main(int argc, char *argv[]) {
+    int prntlog=0;
 
-    char name[]="openfiletext.sms";
-    char filename_log[]="error_log.txt";
-
+    //char name[]="./programs/TESTE.sms";
     FILE *fp;
     instruction_t inst;
 
     FILE *errfp;
+    char filename_log[]="error_log.txt";
+
     int num_errors = 0;
-    
-    fp = openfile(name);
     errfp = fopen(filename_log, "w");
+
+    if(argc>1)
+    {
+        if(strcmp(argv[1],"-l")==0) { prntlog=1; fp=openfile(argv[2]); }
+        else fp=openfile(argv[1]);
+    }
+    else { printf("%s\n", _ERRMSG_NOARGS); return -1; }
 
     // INITIALIZATION
     init();
     scanlabelsinfile(fp);
 
-    while((inst = readline(fp,0)).line!=EOF)
+    while((inst = readline(fp)).line!=EOF)
     {
+        _printinst(inst);
         if(inst.parse)
         {
             inst = parseinst(inst);
@@ -64,11 +72,17 @@ int main(int argc, char *argv[]) {
             if(inst.synerror != SYNERR_NONE)
             {
                 num_errors++;
-                fprintf(errfp, "%s%d\n", _ERRMSG_SYNERR(inst.synerror), inst.line);
+                fprintf(errfp, _ERRMSG_SYNERR, inst.synerror-1, inst.line);
+
+                if(prntlog) fprintf(stderr, _ERRMSG_SYNERR, inst.synerror-1, inst.line);
             }
         }
+        getchar();
     }
 
-    if(num_errors>0) printf("%s\n", _ERRMSG_SYNERR_NUM);
+    if(num_errors>0) printf(_ERRMSG_SYNERR_NUM, num_errors);
+
+    fclose(fp);
+    fclose(errfp);
     return 0;
 }

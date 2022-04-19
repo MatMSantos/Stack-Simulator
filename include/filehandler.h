@@ -16,8 +16,6 @@
 #define MAXSIZE_LINE 14
 #define MAXSIZE_LABEL 8
 
-#define MAXNUM_LABELS 100
-
 typedef struct {
     char name[MAXSIZE_LABEL+1];
     int line;
@@ -71,11 +69,11 @@ FILE *openfile(char name[]);
 /**
  * Read line from file, store in 'instruction'
  * 
- * in:  file to be read; line number;
+ * in:  file to be read;
  * out: struct with what was read (and if there was an error);
  *      line=EOF at eof (mne and param don't matter);
  * err: none;
  */
-instruction_t readline(FILE *fp, int jumpto);
+instruction_t readline(FILE *fp);
 
 #endif
